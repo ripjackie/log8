@@ -1,0 +1,30 @@
+Instruction Set for log8 CPU
+
+Instruction Structure:
+0 000 00 00
+^ ^^^ ^^ ^^
+1  2   3  4
+1: Memory / Arithmetic selector
+2: Instruction Op Code
+3: Register B Selector
+4: Register A Selector
+
+Memory:
+0x0X 0000 NOP
+0x1X 0001 DATA
+0x2X 0010 LOAD
+0x3X 0011 STORE
+0x4X 0100 JUMP
+0x5X 0101 JMPC
+0x6X 0110 NOP
+0x7X 0111 NOP
+
+Arithmetic
+0x8X 1000 ADD
+0x9X 1001 BSL
+0xAX 1010 BSR 
+0xBX 1011 CMP
+
+Next Inst Sequence:
+E_PC | E_PC_C | S_PC | E_RAM_WE | S_RAM
+

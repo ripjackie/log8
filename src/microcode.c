@@ -21,6 +21,12 @@
 #define IR_WE    0x010000
 #define RX0      0x020000
 #define RX1      0x040000
+/*               0x080000
+ *               0x100000
+ *               0x200000
+ *               0x400000
+ *               0x800000
+ */
 
 #define add8 0
 #define sll8 ALU_OP0

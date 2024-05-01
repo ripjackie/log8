@@ -1,0 +1,23 @@
+Instruction Set for log8 CPU
+
+Instruction Structure:
+
+0000 0000 00 000 000
+             RB  RA
+
+0000 0000 NOP
+0001 0000 ALU
+     0000 ADD
+     0001 SLL
+     0010 SLR
+     0011 NOT
+     0100 AND
+     0101 OR
+     0110 XOR
+     0111 CMP
+0010 0000 DATA
+0011 0000 LOAD
+0100 0000 STOR
+0101 0000 JUMP
+0110 0000 JMPC
+0111 0000

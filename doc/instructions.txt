@@ -1,26 +1,18 @@
 Instruction Set for log8 CPU
 
-Instruction Structure:
-
-0000 0000 00 000 000
-             RB  RA
-
 00 NOP
-10-1F ALU
-10 ADD8
-11 SHL8
-12 SHR8
-13 NOT8
-14 AND8
-15 OR8
-16 XOR8
-17 CMP8
-18 ADD16
-19 ADD16
-1a SHL16
-1b SHR16
-1c NOT16
-1d AND16
-1e OR16
-1f XOR16
-20-2F MOV
+10 imm ra
+11 imm rb
+12 imm rl
+13 imm rh
+14 lod ra, M
+15 lod rb, M
+16 str M, ra
+17 str M, rb
+
+imm -> reg
+Reg -> Ram
+Ram -> Reg
+Reg -> Reg
+
+

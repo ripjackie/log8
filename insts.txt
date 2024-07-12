@@ -1,0 +1,45 @@
+values:
+$M -> Hex Literal
+%M -> Bin Literal
+M -> Dec Literal
+
+xxxx x0xx direct $M
+xxxx x1xx indirect ($M)
+xxxx xx00 [a-d]
+
+0000 1000 nop
+0001 0xxx lod [a-d], $M|($M)
+0001 1xxx str [a-d], $M|($M)
+0010 00xx psh [a-d]
+0010 01xx pop [a-d]
+0010 1x00 jmp $M|($M)
+0011 0xxx jmp[cgez] $M|($M)
+0011 1xxx jts $M|($M)
+0100 0xxx rts
+0100 1xxx
+0101 0xxx
+0101 1xxx
+0110 0xxx
+0110 1xxx
+0111 0xxx
+0111 1xxx
+
+1000 xxxx add [a-d], [a-d]
+1001 xxxx sub [a-d], [a-d]
+1010 xxxx and [a-d], [a-d]
+1011 xxxx or  [a-d], [a-d]
+1100 xxxx xor [a-d], [a-d]
+1101 xxxx not [a-d], [a-d]
+1110 xxxx rtl [a-d], [a-d]
+1111 xxxx rtr [a-d], [a-d]
+
+
+ex:
+lod a, $ff | Load 0xFF -> register A
+lod a, ($ff) | Load *($ff) -> register A
+lod A, $fffa | Load 0xFFFA -> Register A (0xFA) & Register B (0xFF)
+Lod A, $M === lod b, $M; lod a, $M+1
+str a, $00FF | Store register A -> ($00FF)
+
+lod a, $ff
+str a, $6000

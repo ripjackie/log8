@@ -15,87 +15,111 @@ PC_OP1      = 0x80
 PC_E8       = 0x0100
 PC_E16      = 0x0200
 
-SP_OP0      = 0x0400
-SP_OP1      = 0x0800
+M_WE        = 0x0400
 
-M_WE        = 0x1000
-M_OE        = 0x2000
+SP_EOP0     = 0x0800
+SP_EOP1     = 0x1000
+SP_SOP0     = 0x2000
+SP_SOP1     = 0x4000
 
-REG_CD_OP0  = 0x4000
-REG_CD_OP1  = 0x8000
-REG_CD_OP2  = 0x010000
+HL_EOP0     = 0x8000
+HL_EOP1     = 0x010000
+HL_SOP0     = 0x020000
+HL_SOP1     = 0x040000
 
-REG_AB_OP0  = 0x020000
-REG_AB_OP1  = 0x040000
-REG_AB_OP2  = 0x080000
+AB_EOP0     = 0x080000
+AB_EOP1     = 0x100000
+AB_SOP0     = 0x200000
+AB_SOP1     = 0x400000
 
-CTRL_RST    = 0x100000
-CTRL_SIR    = 0x200000
-CTRL_SFLG   = 0x400000
+CD_EOP0     = 0x800000
+CD_EOP1     = 0x01000000
+CD_SOP0     = 0x02000000
+CD_SOP1     = 0x04000000
+
+CTRL_SRST   = 0x08000000
+CTRL_SIR    = 0x10000000
+CTRL_SFLG   = 0x20000000
 
 # Combination Pins
-ALU_ADD = 0|0
-ALU_SUB = ALU_OP0|0
-ALU_AND = ALU_OP1|0
+ALU_ADD = 0
+ALU_SUB = ALU_OP0
+ALU_AND = ALU_OP1
 ALU_OR  = ALU_OP1|ALU_OP0
-ALU_XOR = ALU_OP2|0
+ALU_XOR = ALU_OP2
 ALU_NOT = ALU_OP2|ALU_OP0
 ALU_ROL = ALU_OP2|ALU_OP1
 ALU_ROR = ALU_OP2|ALU_OP1|ALU_OP0
 
-PC_STR = PC_OP0|0
-PC_INC = PC_OP1|0
+PC_STR = PC_OP0
+PC_INC = PC_OP1
 PC_DEC = PC_OP1|PC_OP0
 
-SP_SHF = SP_OP0|0
-SP_WT8 = SP_OP1|0
-SP_W16 = SP_OP1|SP_OP0
+SP_E16  = SP_EOP0
+SP_EL   = SP_EOP1
+SP_EH   = SP_EOP1|SP_EOP0
+SP_S16  = SP_SOP0
+SP_SL   = SP_SOP1
+SP_SH   = SP_SOP1|SP_SOP0
 
-REG_SA  = REG_AB_OP1|0
-REG_SB  = REG_AB_OP1|REG_AB_OP0
-REG_EA  = REG_AB_OP2|0
-REG_EB  = REG_AB_OP2|REG_AB_OP0
-REG_EAB = REG_AB_OP2|REG_AB_OP1|REG_AB_OP0
+HL_E16  = HL_EOP0
+HL_EL   = HL_EOP1
+HL_EH   = HL_EOP1|HL_EOP0
+HL_S16  = HL_SOP0
+HL_SL   = HL_SOP1
+HL_SH   = HL_SOP1|HL_SOP0
 
-REG_SC  = REG_CD_OP1|0
-REG_SD  = REG_CD_OP1|REG_CD_OP0
-REG_EC  = REG_CD_OP2|0
-REG_ED  = REG_CD_OP2|REG_CD_OP0
-REG_ECD = REG_CD_OP2|REG_CD_OP1|REG_CD_OP0
+AB_E16  = AB_EOP0
+AB_EL   = AB_EOP1
+AB_EH   = AB_EOP1|AB_EOP0
+AB_S16  = AB_SOP0
+AB_SL   = AB_SOP1
+AB_SH   = AB_SOP1|AB_SOP0
 
-insts = np.zeros((256,8), dtype=np.uint32)
+CD_E16  = CD_EOP0
+CD_EL   = CD_EOP1
+CD_EH   = CD_EOP1|CD_EOP0
+CD_S16  = CD_SOP0
+CD_SL   = CD_SOP1
+CD_SH   = CD_SOP1|CD_SOP0
 
-# Next instruction
-insts[::, :1] = [ PC_E16|PC_INC|M_OE|CTRL_SIR ]
+STEP_MAX = 0x08
+
+NEXT = np.asarray([ PC_E16|PC_INC|CTRL_SIR ], dtype=np.uint32)
+
+
+insts = np.zeros((256, STEP_MAX), dtype=np.uint32)
+
+insts[:, :len(NEXT)] = NEXT
+step = insts[:, len(NEXT):]
 
 ## NOPs
-# Buffer NOP
-insts[0x00, 1:] = [ CTRL_RST, 0, 0, 0, 0, 0, 0 ]
-# NOP
-insts[0x08, 1:] = [ CTRL_RST, 0, 0, 0, 0, 0, 0 ]
-## LOD DIRECT
-# lod a direct
-insts[0x10, 1:] = [ PC_E16|PC_INC|M_OE|REG_SA, CTRL_RST, 0, 0, 0, 0, 0 ]
-# lod b, direct
-insts[0x11, 1:] = [ PC_E16|PC_INC|M_OE|REG_SB, CTRL_RST, 0, 0, 0, 0, 0 ]
-# lod c, direct
-insts[0x12, 1:] = [ PC_E16|PC_INC|M_OE|REG_SC, CTRL_RST, 0, 0, 0, 0, 0 ]
-# lod d, direct
-insts[0x13, 1:] = [ PC_E16|PC_INC|M_OE|REG_SD, CTRL_RST, 0, 0, 0, 0, 0 ]
-## LOD INDIRECT
-# lod a indirect CD
-insts[0x14, 1:] = [ REG_ECD|M_OE|REG_SA, CTRL_RST, 0, 0, 0, 0, 0 ]
-# # lod b indirect CD
-insts[0x15, 1:] = [ REG_ECD|M_OE|REG_SB, CTRL_RST, 0, 0, 0, 0, 0 ]
-# insts[0x15, 1:] = [ REG_ECD|M_SMAR, M_EADR|REG_SB, CTRL_RST, 0, 0, 0 ]
-# # lod c indirect AB
-insts[0x16, 1:] = [ REG_EAB|M_OE|REG_SC, CTRL_RST, 0, 0, 0, 0, 0 ]
-# insts[0x16, 1:] = [ REG_EAB|M_SMAR, M_EADR|REG_SC, CTRL_RST, 0, 0, 0 ]
-# # lod d indirect AB
-insts[0x17, 1:] = [ REG_EAB|M_OE|REG_SD, CTRL_RST, 0, 0, 0, 0, 0 ]
-# insts[0x17, 1:] = [ REG_EAB|M_SMAR, M_EADR|REG_SD, CTRL_RST, 0, 0, 0 ]
+# # Buffer NOP
+step[0x00, :1] = [ CTRL_SRST ]
+# # NOP
+step[0x08, :1] = [ CTRL_SRST ]
+# ## LD DIRECT
+# # ld a direct
+step[0x10, :2] = [ PC_E16|PC_INC|AB_SL, CTRL_SRST ]
+# insts[0x10, 1:] = [ PC_E16|PC_INC|M_OE|REG_SA, CTRL_RST, 0, 0, 0, 0, 0 ]
+# # ld b, direct
+# insts[0x11, 1:] = [ PC_E16|PC_INC|M_OE|REG_SB, CTRL_RST, 0, 0, 0, 0, 0 ]
+# # ld c, direct
+# insts[0x12, 1:] = [ PC_E16|PC_INC|M_OE|REG_SC, CTRL_RST, 0, 0, 0, 0, 0 ]
+# # ld d, direct
+# insts[0x13, 1:] = [ PC_E16|PC_INC|M_OE|REG_SD, CTRL_RST, 0, 0, 0, 0, 0 ]
+# ## LOD INDIRECT
+# # lod a indirect CD
+# insts[0x14, 1:] = [ REG_ECD|M_OE|REG_SA, CTRL_RST, 0, 0, 0, 0, 0 ]
+# # # lod b indirect CD
+# insts[0x15, 1:] = [ REG_ECD|M_OE|REG_SB, CTRL_RST, 0, 0, 0, 0, 0 ]
+# # insts[0x15, 1:] = [ REG_ECD|M_SMAR, M_EADR|REG_SB, CTRL_RST, 0, 0, 0 ]
+# # # lod c indirect AB
+# insts[0x16, 1:] = [ REG_EAB|M_OE|REG_SC, CTRL_RST, 0, 0, 0, 0, 0 ]
+# # insts[0x16, 1:] = [ REG_EAB|M_SMAR, M_EADR|REG_SC, CTRL_RST, 0, 0, 0 ]
+# # # lod d indirect AB
+# insts[0x17, 1:] = [ REG_EAB|M_OE|REG_SD, CTRL_RST, 0, 0, 0, 0, 0 ]
+# # insts[0x17, 1:] = [ REG_EAB|M_SMAR, M_EADR|REG_SD, CTRL_RST, 0, 0, 0 ]
 
-
-print(insts[:0x20])
 
 np.savetxt("/home/ripjackie/tslinkard/microcode.txt", insts, "%08lx", header="v3.0 hex words plain", comments="")

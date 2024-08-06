@@ -8,10 +8,10 @@ xxxx x1xx indirect ($M)
 xxxx xx00 [a-d]
 
 0000 1000 nop
-0001 0xxx lod [a-d], $M|($M)
-0001 1xxx str [a-d], $M|($M)
-0010 00xx psh [a-d]
-0010 01xx pop [a-d]
+0001 0xxx ld[a-d], $M|($M)
+0001 1xxx st[a-d], $M|($M)
+0010 00xx psh[a-d]
+0010 01xx pop[a-d]
 0010 1x00 jmp $M|($M)
 0011 0xxx jmp[cgez] $M|($M)
 0011 1xxx jts $M|($M)

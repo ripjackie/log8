@@ -19,7 +19,6 @@ ALU_OP3     = 0x1000
 ALU_CIN     = 0x2000
 
 ADR_EN      = 0x4000
-ADR_ST      = 0x8000
 
 C_ST        = 0x010000
 C_EN        = 0x020000
@@ -40,8 +39,8 @@ SP_LD       = 0x20000000
 SP_CT       = 0x40000000
 SP_EN       = 0x80000000
 
-MM_E16 = MM_OP1
-MM_S16 = MM_OP0
+MM_EHL = MM_OP1
+MM_SHL = MM_OP0
 MM_SLO = MM_OP2
 MM_SHI = MM_OP2|MM_OP0
 MM_ELO = MM_OP2|MM_OP1
@@ -64,13 +63,11 @@ ALU_RTR = ALU_OP2|ALU_OP1|ALU_OP0
 
 insts = np.zeros((256, 8), dtype=np.uint32)
 
-NEXT = [ PC_EN|PC_INC|ADR_EN|CTRL_SINR ]
+NEXT = [ PC_EN|PC_INC|CTRL_SINR, CTRL_SRST ]
 
 insts[:, :len(NEXT)] = NEXT
 step = insts[:, len(NEXT):]
 
-# NOP
-step[0x08, :1] = [ CTRL_SRST ]
 # lda, direct
 step[0x10, :1] = [ PC_EN|PC_INC|ADR_EN|A_ST|CTRL_SRST ]
 # ldb, direct

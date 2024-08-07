@@ -7,9 +7,16 @@ xxxx x0xx direct $M
 xxxx x1xx indirect ($M)
 xxxx xx00 [a-d]
 
-0000 1000 nop
-0001 0xxx ld[a-d], $M|($M)
-0001 1xxx st[a-d], $M|($M)
+0000 01xx imm [a-d], $M
+0000 10xx ld [a-d], $MM
+0000 11xx st [a-d], $MM ;; NOTE: st a *(SP-4) ??? i likey!
+0001 00xx psh [a-d]
+0001 01xx psh $M
+0001 10xx psh $MM
+
+0001 00xx imm [a-d], #$M
+0001 01xx ld[a-d], $M|($M)
+0001 1xxx st[a-d], $M
 0010 00xx psh[a-d]
 0010 01xx pop[a-d]
 0010 1x00 jmp $M|($M)
@@ -35,6 +42,9 @@ xxxx xx00 [a-d]
 
 
 ex:
+lda #$ff 
+lda $ff00
+sta $ffee
 lod a, $ff | Load 0xFF -> register A
 lod a, ($ff) | Load *($ff) -> register A
 lod A, $fffa | Load 0xFFFA -> Register A (0xFA) & Register B (0xFF)
